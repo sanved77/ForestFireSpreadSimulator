@@ -16,6 +16,7 @@ class Simulation extends TimerTask {
     public static final String ANSI_ORANGE = "\u001B[34m";
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String CLEAR = "\033[H\033[2J";
 
     // Constants
     public static final String FIRE = ANSI_RED + "F" + ANSI_RESET;
@@ -152,8 +153,15 @@ class Simulation extends TimerTask {
 
     public static void clearScreen(){
         try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } catch (IOException | InterruptedException ex) {
+            final String os = System.getProperty("os.name");
+
+            if (os.contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else{
+                System.out.print(CLEAR);  
+                System.out.flush();
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
