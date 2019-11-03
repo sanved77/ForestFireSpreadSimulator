@@ -12,23 +12,29 @@ class Simulation extends TimerTask {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_GREEN_BG = "\u001B[42m";
     public static final String ANSI_BLUE = "\u001B[35m";
-    public static final String ANSI_ORANGE = "\u001B[34m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_ORANGE = "\033[48:2:255:165:0m%s\033[m\n";
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String CLEAR = "\033[H\033[2J";
 
     // Constants
-    public static final String FIRE = ANSI_RED + "F" + ANSI_RESET;
-    public static final String ACT_SENSOR = ANSI_GREEN + "S" + ANSI_RESET;
+    public static final String FIRE = ANSI_YELLOW + "F" + ANSI_RESET;
+    public static final String ACT_SENSOR = ANSI_RED + "S" + ANSI_RESET;
     public static final String WARNED_SENSOR = ANSI_GREEN + "S" + ANSI_RESET;
     public static final String GRASS = " ";
     public static final String SENSOR = "S";
+
 
     // User Constants
     public static final int FIRE_SPREAD = 75;
     public static final int SPEED = 700;
     public static final int SENSORDENSITY = 4;
+    public static final int L_PADDING_OFFSET = 84;
+    public static final int T_PADDING = 15;
+    public static final String L_PADDING = String.format("%"+ L_PADDING_OFFSET +"s", " ");
 
 
     int fireSpread = 0;
@@ -69,12 +75,14 @@ class Simulation extends TimerTask {
         spreadFire();
         // predictFire();
         for(int i = 0; i < 20; i++){
+            System.out.print(L_PADDING);
             for(int j = 0; j < 20; j++){
                 System.out.print(" " + map[i][j]);
-            }System.out.println("");
+            }
+            System.out.println("");
         }
-        System.out.println("\nBlocks affected by fire - " + ANSI_GREEN + (fireSpread + 1) + ANSI_RESET);
-        System.out.println("Sensors Triggered - " + ANSI_GREEN + sensorsTriggered + ANSI_RESET);
+        System.out.println("\n" + L_PADDING + "Blocks affected by fire - " + ANSI_GREEN + (fireSpread + 1) + ANSI_RESET);
+        System.out.println(L_PADDING + "Sensors Triggered - " + ANSI_GREEN + sensorsTriggered + ANSI_RESET);
         fireSpread++;
         if(fireSpread > FIRE_SPREAD){
             synchronized(dummy){
@@ -161,9 +169,12 @@ class Simulation extends TimerTask {
                 System.out.print(CLEAR);  
                 System.out.flush();
             }
+            for(int i = 0 ; i < T_PADDING; i++){
+                System.out.println("");
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
+        } 
     }
 
     public static void resetMap(){
