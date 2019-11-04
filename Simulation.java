@@ -14,7 +14,7 @@ class Simulation extends TimerTask {
     public static final int GRID = 28;
     public static final int L_PADDING_OFFSET = 75;
     public static final int T_PADDING = 15;
-    public static final int ALGORITHM = 2;
+    public static final int ALGORITHM = 1;
     public static final int SEEDI = 10;
     public static final int SEEDJ = 10;
      
@@ -78,6 +78,24 @@ class Simulation extends TimerTask {
     public void run() {
         clearScreen();
         spreadFire();
+        displayMap();
+        predictFire();
+        displayStats();
+        fireSpread++;
+        if(fireSpread > FIRE_SPREAD){
+            synchronized(dummy){
+                dummy.notify();
+            }
+        }
+    }
+
+    public static void displayStats(){
+        System.out.println("\n" + L_PADDING + "Blocks affected by fire - " + ANSI_GREEN + (fireSpread + 1) + ANSI_RESET);
+        System.out.println(L_PADDING + "Sensors Triggered - " + ANSI_GREEN + sensorsTriggered + ANSI_RESET);
+        System.out.println(L_PADDING + "Sensors Warned - " + ANSI_GREEN + sensorsWarned + ANSI_RESET);
+    }
+
+    public static void displayMap(){
         String upperBorder = "";
         int dGRID = GRID*2+1;
         for(int i = 0; i <= dGRID; i++){
@@ -95,16 +113,6 @@ class Simulation extends TimerTask {
             System.out.println("");
         }
         System.out.print(L_PADDING + upperBorder + "\n");
-        predictFire();
-        System.out.println("\n" + L_PADDING + "Blocks affected by fire - " + ANSI_GREEN + (fireSpread + 1) + ANSI_RESET);
-        System.out.println(L_PADDING + "Sensors Triggered - " + ANSI_GREEN + sensorsTriggered + ANSI_RESET);
-        System.out.println(L_PADDING + "Sensors Warned - " + ANSI_GREEN + sensorsWarned + ANSI_RESET);
-        fireSpread++;
-        if(fireSpread > FIRE_SPREAD){
-            synchronized(dummy){
-                dummy.notify();
-            }
-        }
     }
 
     public static void predictFire(){
