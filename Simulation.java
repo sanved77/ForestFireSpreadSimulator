@@ -4,17 +4,22 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Random;
-import java.util.Scanner;
 
 class Simulation extends TimerTask {
     
     // User Constants
     public static final int FIRE_SPREAD = 75;
     public static final int SPEED = 300;
-    public static final int SENSORDENSITY = 3;
-    public static final int L_PADDING_OFFSET = 84;
+    public static final int SENSORDENSITY = 4;
+    public static final int GRID = 28;
+    public static final int L_PADDING_OFFSET = 75;
     public static final int T_PADDING = 15;
     public static final int ALGORITHM = 1;
+    
+    // Seed value
+    public static final int SEEDI = 10;
+    public static final int SEEDJ = 10;
+    
     
     // Prefabs
     public static final String ANSI_RESET = "\u001B[0m";
@@ -26,7 +31,6 @@ class Simulation extends TimerTask {
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String CLEAR = "\033[H\033[2J";
-    public static final int GRID = 28;
 
     // Constants
     public static final String FIRE = ANSI_YELLOW + "F" + ANSI_RESET;
@@ -48,11 +52,10 @@ class Simulation extends TimerTask {
     static ArrayList<Posi> sensorList = new ArrayList<>();
 
     static Random rand = new Random();
-    static Scanner scanner = new Scanner(System.in);
 
     public static void main(String args[]) {
         dummy = new Simulation();
-        Posi seedPosi = new Posi(5,5);
+        Posi seedPosi = new Posi(SEEDI,SEEDJ);
         list.add(seedPosi);
         resetMap();
         TimerTask timerTask = new Simulation();
@@ -91,6 +94,7 @@ class Simulation extends TimerTask {
             }
             System.out.println("");
         }
+        System.out.print(L_PADDING + upperBorder + "\n");
         predictFire();
         System.out.println("\n" + L_PADDING + "Blocks affected by fire - " + ANSI_GREEN + (fireSpread + 1) + ANSI_RESET);
         System.out.println(L_PADDING + "Sensors Triggered - " + ANSI_GREEN + sensorsTriggered + ANSI_RESET);
