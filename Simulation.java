@@ -14,21 +14,16 @@ class Simulation extends TimerTask {
     public static final int GRID = 28;
     public static final int L_PADDING_OFFSET = 75;
     public static final int T_PADDING = 15;
-    public static final int ALGORITHM = 1;
-    
-    // Seed value
+    public static final int ALGORITHM = 2;
     public static final int SEEDI = 10;
     public static final int SEEDJ = 10;
-    
-    
-    // Prefabs
+     
+    // ANSI Prefabs
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_GREEN_BG = "\u001B[42m";
     public static final String ANSI_BLUE = "\u001B[35m";
     public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String CLEAR = "\033[H\033[2J";
 
@@ -40,14 +35,20 @@ class Simulation extends TimerTask {
     public static final String SENSOR = "S";
     public static final String L_PADDING = String.format("%"+ L_PADDING_OFFSET +"s", " ");
 
-    // Variables
+    // Counters
     static int fireSpread = 0;
     static int sensorsWarned = 0;
     static int sensorsTriggered = 0;
+
+    // Synchronized
     static boolean lock = true;
     static Simulation dummy;
+
+    // Graphs 
     static String map[][] = new String[GRID][GRID];
     static int sensormap[][] = new int[GRID][GRID];
+
+    // Lists
     static ArrayList<Posi> list = new ArrayList<>();
     static ArrayList<Posi> sensorList = new ArrayList<>();
 
@@ -68,7 +69,6 @@ class Simulation extends TimerTask {
             try {
                 dummy.wait();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -113,7 +113,7 @@ class Simulation extends TimerTask {
                 for(Posi s : sensorList){
                     for(int k = -SENSORDENSITY; k <= SENSORDENSITY; k+=SENSORDENSITY){
                         for(int l = -SENSORDENSITY; l <= SENSORDENSITY; l+=SENSORDENSITY){
-                            if(s.getI() < 4 || s.getI() > (GRID-4) || s.getJ() < 4 || s.getJ() > (GRID-4)){
+                            if(s.getI() < SENSORDENSITY || s.getI() > (GRID-SENSORDENSITY) || s.getJ() < SENSORDENSITY || s.getJ() > (GRID-SENSORDENSITY)){
                                 continue;
                             }
                             if(map[s.getI()+k][s.getJ()+l].equals(SENSOR)){
@@ -121,6 +121,34 @@ class Simulation extends TimerTask {
                                 sensorsWarned++;
                             }
                         }
+                    }
+                }
+                break;
+                case 2:
+                Posi p = list.get(list.size() - 1);
+                int i = p.getI();
+                int j = p.getJ();
+                if(i % SENSORDENSITY == 0){
+                    int sensorPassedLeft = (j / SENSORDENSITY) * SENSORDENSITY;
+                    int sensorPassedRight = sensorPassedLeft + SENSORDENSITY;
+                    if(map[i][sensorPassedLeft].equals(SENSOR)){
+                        map[i][sensorPassedLeft] = WARNED_SENSOR;
+                        sensorsWarned++;
+                    }
+                    if(map[i][sensorPassedRight].equals(SENSOR)){
+                        map[i][sensorPassedRight] = WARNED_SENSOR;
+                        sensorsWarned++;
+                    }
+                }else if(j % SENSORDENSITY == 0){
+                    int sensorPassedUp = (i / SENSORDENSITY) * SENSORDENSITY;
+                    int sensorPassedDown = sensorPassedUp + SENSORDENSITY;
+                    if(map[sensorPassedUp][j].equals(SENSOR)){
+                        map[sensorPassedUp][j] = WARNED_SENSOR;
+                        sensorsWarned++;
+                    }
+                    if(map[sensorPassedDown][j].equals(SENSOR)){
+                        map[sensorPassedDown][j] = WARNED_SENSOR;
+                        sensorsWarned++;
                     }
                 }
                 break;
