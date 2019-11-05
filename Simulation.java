@@ -14,7 +14,7 @@ class Simulation extends TimerTask {
     public static final int GRID = 28;
     public static final int L_PADDING_OFFSET = 75;
     public static final int T_PADDING = 15;
-    public static final int ALGORITHM = 1;
+    public static final int ALGORITHM = 2;
     public static final int SEEDI = 10;
     public static final int SEEDJ = 10;
      
@@ -98,9 +98,7 @@ class Simulation extends TimerTask {
     public static void displayMap(){
         String upperBorder = "";
         int dGRID = GRID*2+1;
-        for(int i = 0; i <= dGRID; i++){
-            upperBorder+="_";
-        }
+        for(int i = 0; i <= dGRID; i++, upperBorder+="_");
         System.out.print(L_PADDING + upperBorder + "\n");
         for(int i = 0; i < GRID; i++){
             System.out.print(L_PADDING + "|");
