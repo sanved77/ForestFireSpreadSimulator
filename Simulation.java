@@ -5,18 +5,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Random;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import jcifs.smb.*;
+
 class Simulation extends TimerTask {
     
     // User Constants
-    public static final int FIRE_SPREAD = 75;
-    public static final int SPEED = 50;
+    public static final int FIRE_SPREAD = 1000;
+    public static final int SPEED = 80;
     public static final int SENSORDENSITY = 4;
-    public static final int GRID = 28;
-    public static final int L_PADDING_OFFSET = 75;
-    public static final int T_PADDING = 15;
+    public static final int GRID = 52;
+    public static final int L_PADDING_OFFSET = 45;
+    public static final int T_PADDING = 2;
     public static final int ALGORITHM = 1;
-    public static final int SEEDI = 13;
-    public static final int SEEDJ = 13;
+    public static final int SEEDI = 33;
+    public static final int SEEDJ = 33;
      
     // ANSI Prefabs
     public static final String ANSI_RESET = "\u001B[0m";
@@ -55,11 +60,27 @@ class Simulation extends TimerTask {
     static Random rand = new Random();
 
     public static void main(String args[]) {
+
+        
         dummy = new Simulation();
         Posi seedPosi = new Posi(SEEDI,SEEDJ);
         list.add(seedPosi);
         resetMap();
         TimerTask timerTask = new Simulation();
+        try {
+            String user = "candicedhuri@gmail.com:candice1234";
+            NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(user);
+            String path = "smb://desktop-atov87t/test.txt";
+            SmbFile sFile = new SmbFile(path, auth);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new SmbFileInputStream(sFile)));
+            String line = reader.readLine();
+            while (line != null) {
+                line = reader.readLine();
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // Running simulation task as a daemon thread
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(timerTask, 0, SPEED);
@@ -128,7 +149,7 @@ class Simulation extends TimerTask {
                 for(Posi s : sensorList){
                     for(int k = -SENSORDENSITY; k <= SENSORDENSITY; k+=SENSORDENSITY){
                         for(int l = -SENSORDENSITY; l <= SENSORDENSITY; l+=SENSORDENSITY){
-                            if(s.getI() < SENSORDENSITY || s.getI() > (GRID-SENSORDENSITY) || s.getJ() < SENSORDENSITY || s.getJ() > (GRID-SENSORDENSITY)){
+                            if(s.getI() < SENSORDENSITY || s.getI() >= (GRID-SENSORDENSITY) || s.getJ() < SENSORDENSITY || s.getJ() >= (GRID-SENSORDENSITY)){
                                 continue;
                             }
                             if(map[s.getI()+k][s.getJ()+l].equals(SENSOR)){
@@ -221,7 +242,7 @@ class Simulation extends TimerTask {
                 map[i][j] = FIRE;
                 for(int k = -1; k <= 1; k++){
                     for(int l = -1; l <= 1; l++){
-                        if(i < 1 || i > (GRID-1) || j < 1 || j > (GRID-1)){
+                        if(i < 1 || i >= (GRID-1) || j < 1 || j >= (GRID-1)){
                             continue;
                         }
                         if(map[i+k][j+l].equals(SENSOR) || map[i+k][j+l].equals(WARNED_SENSOR)){
