@@ -9,14 +9,14 @@ class Simulation extends TimerTask {
     
     // User Constants
     public static final int FIRE_SPREAD = 75;
-    public static final int SPEED = 300;
+    public static final int SPEED = 50;
     public static final int SENSORDENSITY = 4;
     public static final int GRID = 28;
     public static final int L_PADDING_OFFSET = 75;
     public static final int T_PADDING = 15;
-    public static final int ALGORITHM = 2;
-    public static final int SEEDI = 10;
-    public static final int SEEDJ = 10;
+    public static final int ALGORITHM = 1;
+    public static final int SEEDI = 13;
+    public static final int SEEDJ = 13;
      
     // ANSI Prefabs
     public static final String ANSI_RESET = "\u001B[0m";
@@ -60,7 +60,7 @@ class Simulation extends TimerTask {
         list.add(seedPosi);
         resetMap();
         TimerTask timerTask = new Simulation();
-        // running timer task as daemon thread
+        // Running simulation task as a daemon thread
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(timerTask, 0, SPEED);
         System.out.println("TimerTask started");
@@ -89,12 +89,18 @@ class Simulation extends TimerTask {
         }
     }
 
+    /**
+     * Displays stats 
+     */
     public static void displayStats(){
         System.out.println("\n" + L_PADDING + "Blocks affected by fire - " + ANSI_GREEN + (fireSpread + 1) + ANSI_RESET);
         System.out.println(L_PADDING + "Sensors Triggered - " + ANSI_GREEN + sensorsTriggered + ANSI_RESET);
         System.out.println(L_PADDING + "Sensors Warned - " + ANSI_GREEN + sensorsWarned + ANSI_RESET);
     }
 
+    /**
+     * Displays the map grid
+     */
     public static void displayMap(){
         String upperBorder = "";
         int dGRID = GRID*2+1;
@@ -113,6 +119,9 @@ class Simulation extends TimerTask {
         System.out.print(L_PADDING + upperBorder + "\n");
     }
 
+    /**
+     * Detects and predicts next fire
+     */
     public static void predictFire(){
         switch(ALGORITHM){
             case 1:
@@ -161,6 +170,9 @@ class Simulation extends TimerTask {
         }
     }
 
+    /**
+     * Spreads fire particles randomly using randomize grid
+     */
     public static void spreadFire(){
         
         while(true){
@@ -230,6 +242,9 @@ class Simulation extends TimerTask {
         
     }
 
+    /**
+     * Clears the screen based on the platform being used
+     */
     public static void clearScreen(){
         try {
             final String os = System.getProperty("os.name");
@@ -262,6 +277,9 @@ class Simulation extends TimerTask {
 
 }
 
+/**
+ * Data Class used to denote position
+ */
 class Posi{
 
     int i, j;
